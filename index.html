@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="midnight">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PropPulse — Smart Indian Property Discovery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Header / Navbar -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="#" class="brand" aria-label="PropPulse Home">
+        <span class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 10.5L12 3l9 7.5" />
+            <path d="M5 9.5V20h14V9.5" />
+            <path d="M8 14.5h2l1.2-2.5 1.8 4 1.2-1.5H16" />
+          </svg>
+        </span>
+        <div>
+          <span class="brand-name">PropPulse</span>
+          <span class="brand-tag">Smart Indian Property Discovery</span>
+        </div>
+      </a>
+
+      <div class="nav-actions">
+        <button class="btn btn-ghost" id="openEmiBtn" type="button">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="4" y="2" width="16" height="20" rx="2" />
+            <line x1="8" y1="6" x2="16" y2="6" />
+            <line x1="8" y1="11" x2="10" y2="11" />
+            <line x1="14" y1="11" x2="16" y2="11" />
+            <line x1="8" y1="15" x2="10" y2="15" />
+            <line x1="14" y1="15" x2="16" y2="15" />
+          </svg>
+          <span>EMI Calculator</span>
+        </button>
+
+        <button class="btn btn-ghost" id="openShortlistBtn" type="button">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
+          <span>Shortlist</span>
+          <span class="badge-count" id="shortlistCount">0</span>
+        </button>
+
+        <select id="themeSelect" class="theme-select" aria-label="Select Theme">
+          <option value="midnight">🌙 Midnight Emerald</option>
+          <option value="sandstone">🏜️ Royal Sandstone</option>
+          <option value="sapphire">💎 Sapphire Modern</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero & Filters -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-copy">
+        <span class="pill">RERA Verified • Transparent ₹ Pricing</span>
+        <h1>Find Your Next Home Across India's Fastest-Growing Cities</h1>
+        <p>Explore Vastu-compliant apartments, luxury villas, and prime rentals in Vijayawada, Hyderabad, Bengaluru, Mumbai, and Pune.</p>
+      </div>
+
+      <div class="filter-bar">
+        <div class="filter-group search-group">
+          <label for="searchInput">Search</label>
+          <input type="text" id="searchInput" placeholder="Search locality, city, or property name..." />
+        </div>
+
+        <div class="filter-group">
+          <label for="cityFilter">City</label>
+          <select id="cityFilter">
+            <option value="all">All Cities</option>
+            <option value="Vijayawada">Vijayawada</option>
+            <option value="Hyderabad">Hyderabad</option>
+            <option value="Bengaluru">Bengaluru</option>
+            <option value="Mumbai">Mumbai</option>
+            <option value="Pune">Pune</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="typeFilter">Listing Type</label>
+          <select id="typeFilter">
+            <option value="all">Buy & Rent</option>
+            <option value="Buy">For Sale</option>
+            <option value="Rent">For Rent</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="budgetFilter">Budget (₹)</label>
+          <select id="budgetFilter">
+            <option value="all">Any Budget</option>
+            <option value="under1cr">Under ₹1 Cr</option>
+            <option value="1to3cr">₹1 Cr – ₹3 Cr</option>
+            <option value="above3cr">Above ₹3 Cr</option>
+            <option value="rent">Monthly Rentals</option>
+          </select>
+        </div>
+
+        <button class="btn btn-secondary reset-btn" id="resetFiltersBtn" type="button">Reset</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Property Listings -->
+  <main class="container listings-section">
+    <div class="section-header">
+      <h2 id="resultsTitle">Featured Properties</h2>
+      <span class="results-meta" id="resultsCount">Showing 6 properties</span>
+    </div>
+
+    <div class="property-grid" id="propertyGrid"></div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <strong>PropPulse Realty India</strong>
+        <p>Smart Indian Property Discovery • RERA Verified Listings</p>
+      </div>
+      <div class="footer-links">
+        <span>support@proppulse.in</span>
+        <span>+91 98480 11223</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Property Details Modal -->
+  <div class="modal-overlay" id="detailModal" aria-hidden="true">
+    <div class="modal-card modal-lg" role="dialog" aria-modal="true">
+      <button class="modal-close" id="closeDetailModal" aria-label="Close modal">&times;</button>
+      <div id="detailModalBody"></div>
+    </div>
+  </div>
+
+  <!-- Standalone EMI Calculator Modal -->
+  <div class="modal-overlay" id="emiModal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true">
+      <button class="modal-close" id="closeEmiModal" aria-label="Close modal">&times;</button>
+      <h2 class="modal-title">Home Loan EMI Calculator (₹)</h2>
+      <p class="modal-subtitle">Estimate your monthly Indian Rupee mortgage payment instantly.</p>
+
+      <div class="emi-layout">
+        <div class="emi-controls">
+          <div class="range-group">
+            <div class="range-head">
+              <label for="emiAmount">Loan Amount</label>
+              <strong id="emiAmountVal">₹75 Lakhs</strong>
+            </div>
+            <input type="range" id="emiAmount" min="10" max="500" step="5" value="75" />
+          </div>
+
+          <div class="range-group">
+            <div class="range-head">
+              <label for="emiRate">Interest Rate (p.a.)</label>
+              <strong id="emiRateVal">8.5%</strong>
+            </div>
+            <input type="range" id="emiRate" min="6.5" max="13" step="0.1" value="8.5" />
+          </div>
+
+          <div class="range-group">
+            <div class="range-head">
+              <label for="emiTenure">Loan Tenure</label>
+              <strong id="emiTenureVal">20 Years</strong>
+            </div>
+            <input type="range" id="emiTenure" min="5" max="30" step="1" value="20" />
+          </div>
+        </div>
+
+        <div class="emi-visual">
+          <div class="donut-chart" id="emiDonut">
+            <div class="donut-hole">
+              <span>Monthly EMI</span>
+              <strong id="emiMonthlyOut">₹65,087</strong>
+            </div>
+          </div>
+          <div class="emi-legend">
+            <div><span class="dot dot-principal"></span>Principal: <strong id="emiPrincipalOut">₹75,00,000</strong></div>
+            <div><span class="dot dot-interest"></span>Total Interest: <strong id="emiInterestOut">₹81,20,819</strong></div>
+            <div><span class="dot dot-total"></span>Total Payable: <strong id="emiTotalOut">₹1,56,20,819</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shortlist Slide-Over Drawer -->
+  <div class="drawer-overlay" id="shortlistDrawer" aria-hidden="true">
+    <aside class="drawer-panel">
+      <div class="drawer-header">
+        <h3>Shortlisted Homes</h3>
+        <button class="modal-close static-close" id="closeShortlistBtn" aria-label="Close shortlist">&times;</button>
+      </div>
+      <div class="drawer-body" id="shortlistBody"></div>
+    </aside>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    // Safe Storage Wrapper (works in sandboxed iframes & local files)
+    const memoryStore = {};
+    const safeStorage = {
+      get(key) {
+        try { return localStorage.getItem(key); } catch { return memoryStore[key] || null; }
+      },
+      set(key, val) {
+        try { localStorage.setItem(key, val); } catch { memoryStore[key] = val; }
+      }
+    };
+
+    const fallbackImg = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+        <rect width="800" height="500" fill="#1e293b"/>
+        <path d="M260 330V210l140-95 140 95v120H260z" fill="#334155"/>
+        <rect x="365" y="250" width="70" height="80" fill="#10b981"/>
+        <text x="400" y="395" fill="#cbd5e1" font-family="sans-serif" font-size="22" text-anchor="middle">PropPulse Verified Residence</text>
+      </svg>`
+    );
+
+    // Indian Property Listings Data
+    const properties = [
+      {
+        id: "pp-101",
+        title: "Emerald Heights 3BHK Sky Residence",
+        city: "Vijayawada",
+        locality: "Benz Circle, Vijayawada",
+        type: "Buy",
+        priceValue: 11500000,
+        priceLabel: "₹1.15 Cr",
+        ratePerSqft: "₹5,750 / sq.ft.",
+        beds: 3,
+        baths: 3,
+        area: "2,000 sq.ft.",
+        rera: "AP-RERA P0617001",
+        image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=900&q=80",
+        facilities: ["100% Vastu", "EV Charging", "Power Backup", "Clubhouse", "24/7 Security"],
+        description: "East-facing corner 3BHK apartment near Benz Circle with Italian marble flooring, modular teakwood kitchen, and dedicated twin car parking.",
+        agent: { name: "Raghavendra Rao", phone: "+919848011223", email: "raghav@proppulse.in" }
+      },
+      {
+        id: "pp-102",
+        title: "Saffron Courtyards Independent Villa",
+        city: "Vijayawada",
+        locality: "Moghalrajpuram, Vijayawada",
+        type: "Buy",
+        priceValue: 18500000,
+        priceLabel: "₹1.85 Cr",
+        ratePerSqft: "₹6,600 / sq.ft.",
+        beds: 4,
+        baths: 4,
+        area: "2,800 sq.ft.",
+        rera: "AP-RERA P0617042",
+        image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=900&q=80",
+        facilities: ["Private Terrace", "Borewell & Municipal Water", "Solar Heater", "100% Vastu"],
+        description: "Spacious duplex villa in a quiet Moghalrajpuram lane featuring a landscaped courtyard, home office, and custom teakwood doors.",
+        agent: { name: "Lakshmi Narayana", phone: "+919848022334", email: "lakshmi@proppulse.in" }
+      },
+      {
+        id: "pp-103",
+        title: "Jubilee Crest Luxury Pool Villa",
+        city: "Hyderabad",
+        locality: "Jubilee Hills, Hyderabad",
+        type: "Buy",
+        priceValue: 65000000,
+        priceLabel: "₹6.50 Cr",
+        ratePerSqft: "₹13,540 / sq.ft.",
+        beds: 5,
+        baths: 5,
+        area: "4,800 sq.ft.",
+        rera: "TS-RERA P0240089",
+        image: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=900&q=80",
+        facilities: ["Private Pool", "Home Theater", "Smart Automation", "Power Backup"],
+        description: "Architectural showpiece in Jubilee Hills with double-height living area, private lap pool, elevator, and panoramic city skyline views.",
+        agent: { name: "Ananya Reddy", phone: "+919849055667", email: "ananya@proppulse.in" }
+      },
+      {
+        id: "pp-104",
+        title: "Indiranagar Urban Loft 3BHK",
+        city: "Bengaluru",
+        locality: "100 Feet Road, Indiranagar",
+        type: "Rent",
+        priceValue: 72000,
+        priceLabel: "₹72,000 / mo",
+        ratePerSqft: "Deposit: ₹3.5 Lakh",
+        beds: 3,
+        baths: 3,
+        area: "1,750 sq.ft.",
+        rera: "Verified Owner",
+        image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=900&q=80",
+        facilities: ["Fully Furnished", "Fiber Wi-Fi Ready", "Gym", "Covered Parking"],
+        description: "Walkable to Indiranagar Metro and top cafes. Comes with designer furniture, Bosch kitchen appliances, and a sunlit balcony.",
+        agent: { name: "Karthik Nair", phone: "+919900144556", email: "karthik@proppulse.in" }
+      },
+      {
+        id: "pp-105",
+        title: "Sea Breeze Promenade 3BHK",
+        city: "Mumbai",
+        locality: "Bandra West, Mumbai",
+        type: "Buy",
+        priceValue: 52500000,
+        priceLabel: "₹5.25 Cr",
+        ratePerSqft: "₹32,800 / sq.ft.",
+        beds: 3,
+        baths: 3,
+        area: "1,600 sq.ft.",
+        rera: "MahaRERA P5180031",
+        image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=900&q=80",
+        facilities: ["Sea View", "Concierge", "Rooftop Lounge", "EV Charging"],
+        description: "High-floor Bandra West residence overlooking the Arabian Sea with floor-to-ceiling glazing, modular kitchen, and 2 stack parking slots.",
+        agent: { name: "Meera Deshmukh", phone: "+919820177889", email: "meera@proppulse.in" }
+      },
+      {
+        id: "pp-106",
+        title: "Koregaon Greens Garden Apartment",
+        city: "Pune",
+        locality: "Koregaon Park, Pune",
+        type: "Buy",
+        priceValue: 8800000,
+        priceLabel: "₹88 Lakhs",
+        ratePerSqft: "₹6,770 / sq.ft.",
+        beds: 2,
+        baths: 2,
+        area: "1,300 sq.ft.",
+        rera: "MahaRERA P5210094",
+        image: "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=900&q=80",
+        facilities: ["Garden View", "100% Vastu", "Jogging Track", "Power Backup"],
+        description: "Serene 2BHK nestled amidst greenery in Koregaon Park, ideal for young families and IT professionals seeking tranquil urban living.",
+        agent: { name: "Siddharth Joshi", phone: "+919822099112", email: "siddharth@proppulse.in" }
+      }
+    ];
+
+    let shortlistedIds = JSON.parse(safeStorage.get("proppulse_shortlist") || "[]");
+
+    // DOM Elements
+    const grid = document.getElementById("propertyGrid");
+    const searchInput = document.getElementById("searchInput");
+    const cityFilter = document.getElementById("cityFilter");
+    const typeFilter = document.getElementById("typeFilter");
+    const budgetFilter = document.getElementById("budgetFilter");
+    const resultsCount = document.getElementById("resultsCount");
+    const shortlistCount = document.getElementById("shortlistCount");
+    const themeSelect = document.getElementById("themeSelect");
+    const detailModal = document.getElementById("detailModal");
+    const detailModalBody = document.getElementById("detailModalBody");
+    const emiModal = document.getElementById("emiModal");
+    const shortlistDrawer = document.getElementById("shortlistDrawer");
+    const shortlistBody = document.getElementById("shortlistBody");
+    const toast = document.getElementById("toast");
+
+    // Helpers
+    function formatINR(num) {
+      return "₹" + Math.round(num).toLocaleString("en-IN");
+    }
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => toast.classList.remove("show"), 2600);
+    }
+
+    function calcEMI(principal, annualRate, years) {
+      const r = annualRate / 12 / 100;
+      const n = years * 12;
+      const emi = (principal * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+      const total = emi * n;
+      return { emi, total, interest: total - principal };
+    }
+
+    // Theme Initialization
+    const savedTheme = safeStorage.get("proppulse_theme") || "midnight";
+    document.documentElement.setAttribute("data-theme", savedTheme);
+    themeSelect.value = savedTheme;
+
+    themeSelect.addEventListener("change", (e) => {
+      document.documentElement.setAttribute("data-theme", e.target.value);
+      safeStorage.set("proppulse_theme", e.target.value);
+      showToast(`Switched to ${e.target.options[e.target.selectedIndex].text}`);
+    });
+
+    // Render Listings
+    function getFilteredProperties() {
+      const q = searchInput.value.trim().toLowerCase();
+      const city = cityFilter.value;
+      const type = typeFilter.value;
+      const budget = budgetFilter.value;
+
+      return properties.filter((p) => {
+        const matchQuery = !q || `${p.title} ${p.locality} ${p.city} ${p.facilities.join(" ")}`.toLowerCase().includes(q);
+        const matchCity = city === "all" || p.city === city;
+        const matchType = type === "all" || p.type === type;
+        let matchBudget = true;
+        if (budget === "under1cr") matchBudget = p.type === "Buy" && p.priceValue < 10000000;
+        if (budget === "1to3cr") matchBudget = p.type === "Buy" && p.priceValue >= 10000000 && p.priceValue <= 30000000;
+        if (budget === "above3cr") matchBudget = p.type === "Buy" && p.priceValue > 30000000;
+        if (budget === "rent") matchBudget = p.type === "Rent";
+        return matchQuery && matchCity && matchType && matchBudget;
+      });
+    }
+
+    function renderListings() {
+      const list = getFilteredProperties();
+      resultsCount.textContent = `Showing ${list.length} ${list.length === 1 ? "property" : "properties"}`;
+
+      if (!list.length) {
+        grid.innerHTML = `<div class="empty-state"><h3>No matching properties found</h3><p>Try adjusting your city, budget, or search keywords.</p></div>`;
+        return;
+      }
+
+      grid.innerHTML = list.map((p) => {
+        const saved = shortlistedIds.includes(p.id);
+        const waText = encodeURIComponent(`Hi ${p.agent.name}, I'm interested in ${p.title} (${p.priceLabel}) listed on PropPulse.`);
+        return `
+          <article class="card">
+            <div class="card-media">
+              <img src="${p.image}" alt="${p.title}" loading="lazy" onerror="this.src='${fallbackImg}'" />
+              <div class="card-badges">
+                <span class="tag tag-type">${p.type === "Buy" ? "For Sale" : "For Rent"}</span>
+                <span class="tag tag-rera">${p.rera}</span>
+              </div>
+              <button class="heart-btn ${saved ? "active" : ""}" data-id="${p.id}" aria-label="Toggle shortlist">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="${saved ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="price-row">
+                <span class="price">${p.priceLabel}</span>
+                <span class="rate">${p.ratePerSqft}</span>
+              </div>
+              <h3 class="card-title">${p.title}</h3>
+              <p class="card-loc">${p.locality}</p>
+
+              <div class="specs">
+                <span>${p.beds} Beds</span>
+                <span>${p.baths} Baths</span>
+                <span>${p.area}</span>
+              </div>
+
+              <div class="facilities">
+                ${p.facilities.slice(0, 3).map((f) => `<span>${f}</span>`).join("")}
+              </div>
+
+              <div class="card-actions">
+                <button class="btn btn-primary view-detail-btn" data-id="${p.id}" type="button">View Details</button>
+                <a class="btn btn-outline" href="https://wa.me/${p.agent.phone.replace("+", "")}?text=${waText}" target="_blank" rel="noopener">WhatsApp</a>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    // Shortlist Logic
+    function updateShortlistUI() {
+      shortlistCount.textContent = shortlistedIds.length;
+      const savedProps = properties.filter((p) => shortlistedIds.includes(p.id));
+      if (!savedProps.length) {
+        shortlistBody.innerHTML = `<p class="empty-drawer">No homes shortlisted yet. Tap the heart icon on any listing to save it here.</p>`;
+        return;
+      }
+      shortlistBody.innerHTML = savedProps.map((p) => `
+        <div class="drawer-item">
+          <img src="${p.image}" alt="${p.title}" onerror="this.src='${fallbackImg}'" />
+          <div class="drawer-item-info">
+            <strong>${p.priceLabel}</strong>
+            <span>${p.title}</span>
+            <small>${p.locality}</small>
+            <div class="drawer-item-actions">
+              <button class="link-btn view-detail-btn" data-id="${p.id}">View</button>
+              <button class="link-btn danger-btn remove-shortlist-btn" data-id="${p.id}">Remove</button>
+            </div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function toggleShortlist(id) {
+      if (shortlistedIds.includes(id)) {
+        shortlistedIds = shortlistedIds.filter((item) => item !== id);
+        showToast("Removed from shortlist");
+      } else {
+        shortlistedIds.push(id);
+        showToast("Added to shortlist");
+      }
+      safeStorage.set("proppulse_shortlist", JSON.stringify(shortlistedIds));
+      renderListings();
+      updateShortlistUI();
+    }
+
+    // Property Details Modal
+    function openDetailModal(id) {
+      const p = properties.find((item) => item.id === id);
+      if (!p) return;
+
+      const waText = encodeURIComponent(`Hi ${p.agent.name}, I'd like to schedule a visit for ${p.title} (${p.priceLabel}) on PropPulse.`);
+      const emiBlock = p.type === "Buy" ? (() => {
+        const loan80 = p.priceValue * 0.8;
+        const { emi } = calcEMI(loan80, 8.5, 20);
+        return `
+          <div class="embedded-emi">
+            <h4>Estimated Home Loan EMI (80% Loan @ 8.5% for 20 yrs)</h4>
+            <div class="embedded-emi-val">${formatINR(emi)} <span>/ month</span></div>
+            <small>Loan Amount: ${formatINR(loan80)} • Down Payment (20%): ${formatINR(p.priceValue * 0.2)}</small>
+          </div>
+        `;
+      })() : "";
+
+      detailModalBody.innerHTML = `
+        <div class="detail-hero">
+          <img src="${p.image}" alt="${p.title}" onerror="this.src='${fallbackImg}'" />
+        </div>
+        <div class="detail-content">
+          <div class="detail-top">
+            <div>
+              <span class="tag tag-type">${p.type === "Buy" ? "For Sale" : "For Rent"}</span>
+              <span class="tag tag-rera">${p.rera}</span>
+              <h2>${p.title}</h2>
+              <p class="card-loc">${p.locality}</p>
+            </div>
+            <div class="detail-price">
+              <strong>${p.priceLabel}</strong>
+              <span>${p.ratePerSqft}</span>
+            </div>
+          </div>
+
+          <div class="specs detail-specs">
+            <span>${p.beds} Bedrooms</span>
+            <span>${p.baths} Bathrooms</span>
+            <span>${p.area}</span>
+          </div>
+
+          <p class="detail-desc">${p.description}</p>
+
+          <div class="facilities detail-facilities">
+            ${p.facilities.map((f) => `<span>✓ ${f}</span>`).join("")}
+          </div>
+
+          ${emiBlock}
+
+          <div class="contact-grid">
+            <div class="agent-box">
+              <h4>Listed By</h4>
+              <strong>${p.agent.name}</strong>
+              <p>${p.agent.email} • ${p.agent.phone}</p>
+              <div class="agent-btns">
+                <a class="btn btn-primary" href="tel:${p.agent.phone}">Call Agent</a>
+                <a class="btn btn-outline" href="https://wa.me/${p.agent.phone.replace("+", "")}?text=${waText}" target="_blank" rel="noopener">WhatsApp</a>
+              </div>
+            </div>
+
+            <form class="visit-form" id="visitForm">
+              <h4>Book a Site Visit</h4>
+              <input type="text" required placeholder="Your Name" />
+              <input type="tel" required placeholder="+91 Mobile Number" />
+              <input type="date" required />
+              <button class="btn btn-primary" type="submit">Request Visit</button>
+            </form>
+          </div>
+        </div>
+      `;
+
+      detailModal.classList.add("open");
+      detailModal.setAttribute("aria-hidden", "false");
+
+      document.getElementById("visitForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        detailModal.classList.remove("open");
+        showToast(`Site visit requested for ${p.title}`);
+      });
+    }
+
+    // Standalone EMI Calculator
+    const emiAmount = document.getElementById("emiAmount");
+    const emiRate = document.getElementById("emiRate");
+    const emiTenure = document.getElementById("emiTenure");
+
+    function updateEmiModal() {
+      const lakhs = Number(emiAmount.value);
+      const principal = lakhs * 100000;
+      const rate = Number(emiRate.value);
+      const years = Number(emiTenure.value);
+      const { emi, total, interest } = calcEMI(principal, rate, years);
+
+      document.getElementById("emiAmountVal").textContent = lakhs >= 100 ? `₹${(lakhs / 100).toFixed(2)} Cr` : `₹${lakhs} Lakhs`;
+      document.getElementById("emiRateVal").textContent = `${rate.toFixed(1)}%`;
+      document.getElementById("emiTenureVal").textContent = `${years} Years`;
+      document.getElementById("emiMonthlyOut").textContent = formatINR(emi);
+      document.getElementById("emiPrincipalOut").textContent = formatINR(principal);
+      document.getElementById("emiInterestOut").textContent = formatINR(interest);
+      document.getElementById("emiTotalOut").textContent = formatINR(total);
+
+      const principalPct = Math.round((principal / total) * 100);
+      document.getElementById("emiDonut").style.background = `conic-gradient(var(--accent) 0% ${principalPct}%, var(--accent-2) ${principalPct}% 100%)`;
+    }
+
+    [emiAmount, emiRate, emiTenure].forEach((el) => el.addEventListener("input", updateEmiModal));
+
+    // Global Event Delegation
+    document.addEventListener("click", (e) => {
+      const heart = e.target.closest(".heart-btn");
+      if (heart) toggleShortlist(heart.dataset.id);
+
+      const removeBtn = e.target.closest(".remove-shortlist-btn");
+      if (removeBtn) toggleShortlist(removeBtn.dataset.id);
+
+      const detailBtn = e.target.closest(".view-detail-btn");
+      if (detailBtn) {
+        shortlistDrawer.classList.remove("open");
+        openDetailModal(detailBtn.dataset.id);
+      }
+    });
+
+    // Filter Events
+    [searchInput, cityFilter, typeFilter, budgetFilter].forEach((el) => el.addEventListener("input", renderListings));
+    document.getElementById("resetFiltersBtn").addEventListener("click", () => {
+      searchInput.value = "";
+      cityFilter.value = "all";
+      typeFilter.value = "all";
+      budgetFilter.value = "all";
+      renderListings();
+    });
+
+    // Modal & Drawer Controls
+    document.getElementById("openEmiBtn").addEventListener("click", () => {
+      updateEmiModal();
+      emiModal.classList.add("open");
+    });
+    document.getElementById("closeEmiModal").addEventListener("click", () => emiModal.classList.remove("open"));
+    document.getElementById("closeDetailModal").addEventListener("click", () => detailModal.classList.remove("open"));
+    document.getElementById("openShortlistBtn").addEventListener("click", () => shortlistDrawer.classList.add("open"));
+    document.getElementById("closeShortlistBtn").addEventListener("click", () => shortlistDrawer.classList.remove("open"));
+
+    [detailModal, emiModal, shortlistDrawer].forEach((overlay) => {
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) overlay.classList.remove("open");
+      });
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        detailModal.classList.remove("open");
+        emiModal.classList.remove("open");
+        shortlistDrawer.classList.remove("open");
+      }
+    });
+
+    // Initial Render
+    renderListings();
+    updateShortlistUI();
+    updateEmiModal();
+  </script>
+</body>
+</html>
